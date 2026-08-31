@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local agent state / generated artifacts
+.agent/
+.agent_state/
+.memory/
+sessions/
+outputs/
+artifacts/
+
+# Local model files
+*.gguf
+*.ggml
+*.safetensors
+*.onnx
+
+# Local databases / vector stores
+*.db
+*.sqlite
+*.sqlite3
+chroma/
+.qdrant/
+vectorstore/
+embeddings/
+
+# Local workspace contents are runtime data, not source.
+workspace/*
+!workspace/.gitkeep
+
+# uv cache
+.uv/
