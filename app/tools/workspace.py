@@ -2,21 +2,14 @@
 
 from __future__ import annotations
 
-import os
-from pathlib import Path
+from app.config import WORKSPACE_ROOT
 
-
-DEFAULT_WORKSPACE = Path(__file__).resolve().parents[2] / "workspace"
-
-WORKSPACE_ROOT = Path(
-    os.getenv("QWENDOLYN_WORKSPACE", str(DEFAULT_WORKSPACE))
-).expanduser().resolve()
 
 MAX_READ_BYTES = 2_000_000
 MAX_WRITE_BYTES = 2_000_000
 
 
-def _resolve(path: str) -> Path:
+def _resolve(path: str):
     """Resolve a model-supplied path and keep it inside the workspace."""
     candidate = (WORKSPACE_ROOT / path).resolve()
 
@@ -71,6 +64,7 @@ def write_file(path: str, content: str) -> str:
 
     return f"Wrote {len(encoded)} bytes to {path}."
 
+
 def search_files(query: str) -> str:
     """Search text files in the workspace for a string."""
     if not query.strip():
@@ -89,12 +83,18 @@ def search_files(query: str) -> str:
                 continue
 
             content = path.read_text(encoding="utf-8")
+
         except (UnicodeDecodeError, OSError):
             continue
 
-        for line_number, line in enumerate(content.splitlines(), start=1):
+        for line_number, line in enumerate(
+            content.splitlines(),
+            start=1,
+        ):
             if query.lower() in line.lower():
                 relative = path.relative_to(WORKSPACE_ROOT)
-                matches.append(f"{relative}:{line_number}: {line.strip()}")
+                matches.append(
+                    f"{relative}:{line_number}: {line.strip()}"
+                )
 
     return "\n".join(matches) if matches else "No matches found."
