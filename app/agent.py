@@ -10,7 +10,7 @@ from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models.lite_llm import LiteLlm
 
-from app.tools.workspace import list_workspace, read_file, write_file
+from app.tools.workspace import list_workspace, read_file, write_file, search_files
 from app.tools.run_command import run_command
 
 INSTRUCTIONS_PATH = Path(__file__).parent / "personas" / "developer.txt"
@@ -32,7 +32,7 @@ root_agent = Agent(
     ),
     description="A local Qwen agent with a controlled workspace and Python execution.",
     instruction=INSTRUCTIONS,
-    tools=[list_workspace, read_file, write_file, run_command],
+    tools=[list_workspace, read_file, write_file, run_command, search_files],
 )
 
 app = App(
