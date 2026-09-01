@@ -4,12 +4,18 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
 from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models.lite_llm import LiteLlm
 
-from app.tools.workspace import list_workspace, read_file, run_python, write_file
+from app.tools.workspace import list_workspace, read_file, write_file
+from app.tools.run_command import run_command
+
+INSTRUCTIONS_PATH = Path(__file__).parent / "personas" / "developer.txt"
+
+INSTRUCTIONS = INSTRUCTIONS_PATH.read_text(encoding="utf-8")
 
 load_dotenv()
 
@@ -25,25 +31,8 @@ root_agent = Agent(
         temperature=TEMPERATURE,
     ),
     description="A local Qwen agent with a controlled workspace and Python execution.",
-    instruction="""
-You are Qwendolyn, a local general-purpose agent.
-
-You have three classes of capabilities:
-- Inspect the workspace with list_workspace and read_file.
-- Create or modify workspace files with write_file.
-- Run Python code with run_python.
-
-The workspace is the agent's working environment. Paths supplied to file tools
-are relative to workspace/; never assume access to files outside it.
-
-Use tools when they materially help accomplish the user's request. For Python
-work, prefer run_python for computation or scripts and inspect the output before
-claiming that something worked.
-
-Be explicit about tool results and failures. Do not claim to have changed a file
-or executed code unless the corresponding tool returned successfully.
-""",
-    tools=[list_workspace, read_file, write_file, run_python],
+    instruction=INSTRUCTIONS,
+    tools=[list_workspace, read_file, write_file, run_command],
 )
 
 app = App(

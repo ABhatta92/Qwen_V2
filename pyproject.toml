@@ -9,6 +9,7 @@ authors = [
 ]
 dependencies = [
     "google-adk[extensions]>=2.0.0,<3.0.0",
+    "mcp>=1.28.1",
 ]
 
 [dependency-groups]
