@@ -15,10 +15,13 @@ def run_command(
     command: str,
     timeout_seconds: int = DEFAULT_COMMAND_TIMEOUT,
 ) -> str:
-    """Run a shell command with the workspace as its working directory.
+    """Execute a shell command.
 
-    Commands execute with the agent workspace as the current directory.
-    The model cannot choose a different working directory.
+    USE THIS TOOL to run programs, scripts, tests, package commands,
+    database queries, builds, or other executable operations.
+
+    Do NOT use this tool merely to create or edit text files.
+    Use write_file instead.
     """
 
     if not command.strip():

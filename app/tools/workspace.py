@@ -20,7 +20,11 @@ def _resolve(path: str):
 
 
 def list_workspace() -> str:
-    """List files and directories available inside the workspace."""
+    """List files and directories in the workspace.
+
+    USE THIS TOOL when you need to discover what files exist
+    or understand the workspace structure.
+    """
     WORKSPACE_ROOT.mkdir(parents=True, exist_ok=True)
 
     entries = []
@@ -35,7 +39,10 @@ def list_workspace() -> str:
 
 
 def read_file(path: str) -> str:
-    """Read a UTF-8 text file from the workspace."""
+    """Read the contents of an existing text file.
+
+    USE THIS TOOL when you need to inspect a specific file.
+    """
     file_path = _resolve(path)
 
     if not file_path.is_file():
@@ -50,7 +57,17 @@ def read_file(path: str) -> str:
 
 
 def write_file(path: str, content: str) -> str:
-    """Write UTF-8 text to a file inside the workspace."""
+    """Create or overwrite a text file.
+
+    USE THIS TOOL when you need to create, modify, or save a file.
+
+    Examples:
+    - Save a Python script -> write_file
+    - Save a report -> write_file
+    - Modify an existing text file -> write_file
+
+    Do NOT use run_command to create files.
+    """
     encoded = content.encode("utf-8")
 
     if len(encoded) > MAX_WRITE_BYTES:
@@ -66,7 +83,11 @@ def write_file(path: str, content: str) -> str:
 
 
 def search_files(query: str) -> str:
-    """Search text files in the workspace for a string."""
+    """Search existing workspace files for text.
+
+    USE THIS TOOL when you need to find where something is defined
+    without knowing the file containing it.
+    """
     if not query.strip():
         raise ValueError("Search query cannot be empty.")
 

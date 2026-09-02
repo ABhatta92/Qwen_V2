@@ -25,13 +25,31 @@ from app.tools.workspace import (
 INSTRUCTIONS_PATH = Path(__file__).parent / "personas" / "developer.txt"
 INSTRUCTIONS = INSTRUCTIONS_PATH.read_text(encoding="utf-8")
 
+def inspect_tools(callback_context, llm_request):
+    print("\n" + "=" * 80)
+    print("TOOLS SENT TO MODEL")
+    print("=" * 80)
+
+    if llm_request.config.tools:
+        for tool in llm_request.config.tools:
+            if tool.function_declarations:
+                for fn in tool.function_declarations:
+                    print(f"\nNAME: {fn.name}")
+                    print(f"DESCRIPTION: {fn.description}")
+                    print(f"PARAMETERS: {fn.parameters}")
+
+    print("=" * 80 + "\n")
 
 root_agent = Agent(
     name="qwen_v2",
     model=LiteLlm(
-        model=f"ollama_chat/{QWEN_MODEL}",
-        api_base=OLLAMA_API_BASE,
+        model=f"openai/{QWEN_MODEL}",
+        api_base=f"{OLLAMA_API_BASE}/v1",
+        api_key="ollama",
         temperature=QWEN_TEMPERATURE,
+        extra_body={
+            "think": False,
+        },
     ),
     description="A local Qwen software development agent.",
     instruction=INSTRUCTIONS,
@@ -42,6 +60,7 @@ root_agent = Agent(
         run_command,
         search_files,
     ],
+    before_model_callback=inspect_tools,
 )
 
 app = App(
