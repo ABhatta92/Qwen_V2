@@ -1,4 +1,9 @@
-"""Command execution tool for the local Qwen agent."""
+"""Command execution tool for the local Qwen agent.
+
+GCP equivalent: submit allowlisted workloads to Cloud Run Jobs, or use an
+Agent Engine code-execution environment. Do not use ``shell=True`` in a
+production agent runtime.
+"""
 
 from __future__ import annotations
 
@@ -22,6 +27,10 @@ def run_command(
 
     Do NOT use this tool merely to create or edit text files.
     Use write_file instead.
+
+    GCP equivalent: validate structured job arguments, invoke the approved
+    Cloud Run Job or Agent Engine executor, and return its bounded logs/status.
+    The executor should use a dedicated, least-privilege service account.
     """
 
     if not command.strip():
@@ -38,6 +47,8 @@ def run_command(
     env = os.environ.copy()
 
     try:
+        # Local-only implementation. In GCP, the isolated executor owns
+        # process creation, resource limits, and its Cloud Storage workspace.
         completed = subprocess.run(
             command,
             cwd=WORKSPACE_ROOT,

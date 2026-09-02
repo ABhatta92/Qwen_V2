@@ -1,4 +1,8 @@
-"""Workspace tools for the local Qwen agent."""
+"""Workspace tools for the local Qwen agent.
+
+GCP equivalent: use Cloud Storage objects under a per-session prefix and the
+runtime service account. Never let model input select an unrestricted bucket.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,11 @@ MAX_WRITE_BYTES = 2_000_000
 
 
 def _resolve(path: str):
-    """Resolve a model-supplied path and keep it inside the workspace."""
+    """Resolve a model-supplied path and keep it inside the workspace.
+
+    GCP equivalent: validate the relative object name before joining it to the
+    fixed Cloud Storage session prefix.
+    """
     candidate = (WORKSPACE_ROOT / path).resolve()
 
     if candidate != WORKSPACE_ROOT and WORKSPACE_ROOT not in candidate.parents:
@@ -25,6 +33,7 @@ def list_workspace() -> str:
     USE THIS TOOL when you need to discover what files exist
     or understand the workspace structure.
     """
+    # GCP equivalent: ``storage.Client().list_blobs(bucket, prefix=...)``.
     WORKSPACE_ROOT.mkdir(parents=True, exist_ok=True)
 
     entries = []
@@ -43,6 +52,8 @@ def read_file(path: str) -> str:
 
     USE THIS TOOL when you need to inspect a specific file.
     """
+    # GCP equivalent: download the validated object after enforcing a size
+    # limit with Cloud Storage object metadata.
     file_path = _resolve(path)
 
     if not file_path.is_file():
@@ -68,6 +79,8 @@ def write_file(path: str, content: str) -> str:
 
     Do NOT use run_command to create files.
     """
+    # GCP equivalent: upload to the validated object with a content type and,
+    # when needed, generation preconditions for optimistic concurrency.
     encoded = content.encode("utf-8")
 
     if len(encoded) > MAX_WRITE_BYTES:
@@ -88,6 +101,8 @@ def search_files(query: str) -> str:
     USE THIS TOOL when you need to find where something is defined
     without knowing the file containing it.
     """
+    # GCP equivalent: list only the session prefix. For large document sets,
+    # index the corpus in Vertex AI Search instead of scanning objects.
     if not query.strip():
         raise ValueError("Search query cannot be empty.")
 

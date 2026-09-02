@@ -1,4 +1,8 @@
-"""Root ADK agent for the local Qwen V2 MVP."""
+"""Root ADK agent for the local Qwen V2 MVP.
+
+GCP migration: retain this ADK agent definition, replace its model with Vertex
+AI Gemini, then deploy the App to Vertex AI Agent Engine or Cloud Run.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +10,8 @@ from pathlib import Path
 
 from google.adk.agents import Agent
 from google.adk.apps import App
+# Local-development adapter. GCP equivalent: configure ``model`` with a Vertex
+# AI Gemini model name and let ADK authenticate through Google credentials.
 from google.adk.models.lite_llm import LiteLlm
 
 from app.config import (
@@ -40,6 +46,8 @@ def inspect_tools(callback_context, llm_request):
 
     print("=" * 80 + "\n")
 
+# This remains the ADK orchestration boundary. Agent Engine adds managed agent
+# sessions and observability; Cloud Run suits a containerized HTTP deployment.
 root_agent = Agent(
     name="qwen_v2",
     model=LiteLlm(
@@ -53,6 +61,8 @@ root_agent = Agent(
     ),
     description="A local Qwen software development agent.",
     instruction=INSTRUCTIONS,
+    # Local callables are appropriate for the MVP. Use the GCP-backed versions
+    # described in their modules before deploying this agent to production.
     tools=[
         list_workspace,
         read_file,
